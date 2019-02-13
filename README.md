@@ -81,9 +81,14 @@ Here I give two options. The first is with most of the FFmpeg options enabled. T
 make
 ```
 
-### Tests:
+### Step 7 - Quick test
+
+This works on the same machine, from multiple terminals.
+
 ```bash
-/ffmpeg -i ~/Downloads/input.mkv -f libndi_newtek -clock_video true -clock_audio true -pix_fmt uyvy422 OUTPUT
+./ffmpeg -i ~/Downloads/input.mkv -f libndi_newtek -clock_video true -clock_audio true -pix_fmt uyvy422 "OUTPUT"
+
+./ffmpeg -f libndi_newtek -find_sources 1 -i dummy
 
 ./ffplay -f libndi_newtek -i "MACBOOK.LOCAL (OUTPUT)"
 ```
