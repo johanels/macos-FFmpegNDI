@@ -1,21 +1,33 @@
-# FFMPEG with NewTek NDI® support
+# FFMPEG with NewTek NDI® support on MacOS
 
 Because of the NewTek NDI® SDK license agreement, we cannot distribute the SDK with FFmpeg directly. Here I've tried to make compiling it as simple as possible and then use this version to build a point2point NDI link over the Internet.
 
 The theory is that if you can get NDI into and out of FFmpeg, FFmpeg has a documented point2point streaming documented on their site.
 
+## Step 1 - Getting the SDK
+
 Register and request the NewTek NDI® Software Developer Kit download link from https://www.newtek.com/ndi/sdk/#download-sdk and then download the MacOS version and install it. It dumps itself in the root of the drive, which I'm not happy about, but what can we do?
 
-Install build tools:
+## Step 2 - Build environment
+
+Install build tools using Brew. If you are not using brew or want to compile the dependencies as well, please see the page on the FFmpeg site for details.
+
 ```bash
-brew install automake fdk-aac git lame libass libtool libvorbis libvpx opus sdl shtool texi2html theora wget x264 x265 xvid nasm
+brew install automake git nasm shtool texi2html theora wget \
+    fdk-aac lame opus sdl x264 x265 xvid \
+    libass libtool libvorbis libvpx
 ```
 
-Clone FFmpeg repo:
+### Step 3 - Get the FFmpeg source
+
+Clone FFmpeg repo from there GIT repo.
+
 ```bash
 git clone http://source.ffmpeg.org/git/ffmpeg.git ffmpeg
 cd ffmpeg
 ```
+
+### Step 4 - Link into NewTek NDI® SDK
 
 Symbolic links to resolve locations:
 ```bash
@@ -23,7 +35,12 @@ ln -s /NewTek\ NDI\ SDK/ ndi
 sudo ln -s /usr/local/lib/libndi.3.dylib /usr/local/lib/libndi.dylib
 ```
 
-Configure a full FFmpeg build:
+### Step 5 - Configure the FFmpeg build
+
+Here I give two options. The first is with most of the FFmpeg options enabled. This results in a much bigger build, but also much better support.
+
+#### Option 1 - FFmpeg large build
+
 ```bash
 ./configure  --prefix=/usr/local \
   --enable-gpl \
@@ -45,7 +62,9 @@ Configure a full FFmpeg build:
   --extra-libs="-lpthread -lm" \
   --samples=fate-suite/
 ```
-or a more vanilla version:
+
+#### Option 2 - FFmpeg simple build
+
 ```bash
 ./configure --enable-nonfree \
   --enable-gpl \
@@ -56,7 +75,8 @@ or a more vanilla version:
   --extra-ldflags="-L$HOME/Development/ffmpeg/ndi/lib/x64"
 ```
 
-Compile:
+### Step 6 - Let it build
+
 ```bash
 make
 ```
@@ -68,7 +88,6 @@ make
 ./ffplay -f libndi_newtek -i "MACBOOK.LOCAL (OUTPUT)"
 ```
 
-### References:
 ## References:
 * FFmpeg - https://www.ffmpeg.org
 ** Streaming Guide - https://trac.ffmpeg.org/wiki/StreamingGuide
