@@ -31,7 +31,7 @@ cd ffmpeg
 
 Symbolic links to resolve locations:
 ```bash
-ln -s /NewTek\ NDI\ SDK/ ndi
+sudo ln -s /NewTek\ NDI\ SDK/ ndi
 sudo ln -s /usr/local/lib/libndi.3.dylib /usr/local/lib/libndi.dylib
 ```
 
@@ -57,8 +57,8 @@ Here I give two options. The first is with most of the FFmpeg options enabled. T
   --enable-libx265 \
   --enable-libxvid \
   --enable-nonfree \
-  --extra-cflags="-I$HOME/Development/ffmpeg/ndi/include" \
-  --extra-ldflags="-L$HOME/Development/ffmpeg/ndi/lib/x64" \
+  --extra-cflags="-I$PWD/ndi/include" \
+  --extra-ldflags="-L$PWD/ndi/lib/x64" \
   --extra-libs="-lpthread -lm" \
   --samples=fate-suite/
 ```
@@ -71,8 +71,8 @@ Here I give two options. The first is with most of the FFmpeg options enabled. T
   --enable-libndi_newtek \
   --enable-libx264 \
   --enable-nonfree \
-  --extra-cflags="-I$HOME/Development/ffmpeg/ndi/include" \
-  --extra-ldflags="-L$HOME/Development/ffmpeg/ndi/lib/x64"
+  --extra-cflags="-I$PWD/ndi/include" \
+  --extra-ldflags="-L$PWD/ffmpeg/ndi/lib/x64"
 ```
 
 ### Step 6 - Let it build
@@ -91,6 +91,22 @@ This works on the same machine, from multiple terminals.
 ./ffmpeg -f libndi_newtek -find_sources 1 -i dummy
 
 ./ffplay -f libndi_newtek -i "MACBOOK.LOCAL (OUTPUT)"
+```
+
+## TX & RX samples
+```bash
+# TX & RX
+./ffmpeg -i ~/Downloads/input.mkv -f mpegts - | ./ffplay -i -
+
+# TX
+./ffmpeg -re -i ~/Downloads/input.mkv -f mpegts "udp://192.168.33.159:1234?pkt_size=1316"
+# RX
+./ffmpeg -i udp://:1234 -f mpegts - | ./ffplay -
+
+# TX
+./ffmpeg -f libndi_newtek -i "MACBOOK (OUTPUT)" -f mpegts "udp://192.168.33.159:1234?pkt_size=1316"
+# RX
+./ffmpeg -i udp://:1234 -f libndi_newtek -clock_video true -clock_audio true -pix_fmt uyvy422 "OUTPUT"
 ```
 
 ## References:
