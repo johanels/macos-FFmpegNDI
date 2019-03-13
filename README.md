@@ -12,6 +12,7 @@ Register and request the NewTek NDI® Software Developer Kit download link from 
 
 Install build tools using Brew. If you are not using brew or want to compile the dependencies as well, please see the page on the FFmpeg site for details.
 
+
 ```bash
 brew install automake git nasm shtool texi2html theora wget \
     fdk-aac lame opus sdl x264 x265 xvid \
